@@ -14,7 +14,7 @@
     <script type="text/javascript" src="js/js.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 
-    <!-- 音频元素，设置正确的音乐文件路径在023文件夹下 -->
+    <!-- 音频元素，设置正确的音乐文件路径在Web/023文件夹下 -->
     <audio id="main_audio" autoplay="autoplay" preload="auto" loop="">
         <source src="Web/023/Memories - Magnus 5.mp3" type="audio/mpeg">
     </audio>
@@ -24,7 +24,7 @@
             <h2>小情书</h2>
             <div class="bb_text">
                 <div id="code">
-                    恬恬有人说爱情可以让人失去生命，但我不会。我要留着这条命为你擦去嘴角的面渣；我要留着这条命去买你喜欢的玫瑰花；我要留着这条命拂去你眼角的泪水；我要留着这条命去撑起你的快乐天堂；如果有一天你找到了心中的他，我会爬上山崖，为你去摘那朵你心中的花！我想和你一起过平淡的生活......清晨可以看到你的笑脸和餐桌上的牛奶煎蛋，然后一起出门，很努力地工作，下班去超市买菜，一起回家做晚饭，夕阳下牵手散步......一直到老...
+                    恬恬有人说爱情可以让人失去生命，但我不会。我要留着这条命为你擦去嘴角的面渣；我要留着这条命去买你喜欢的玫瑰花；我要留着这条命拂去你眼角的泪水；我要留着这条命去撑起你的快乐天堂；如果有一天你找到了心中的他，我会爬上山崖，为你去摘那朵你心中的花！我想和你一起过平淡的生活......清晨可以看到你的笑脸和餐桌上的的牛奶煎蛋，然后一起出门，很努力地工作，下班去超市买菜，一起回家做晚饭，夕阳下牵手散步......一直到老...
                 </div>
             </div>
             <p class="bb_myname">
@@ -58,25 +58,49 @@
         // 获取音频元素
         var audio = document.getElementById("main_audio");
 
-        // 定义一个函数来尝试播放音乐
-        function tryPlayMusic() {
-            audio.play().then(() => {
-                // 播放成功后的处理（这里可以添加日志输出等，比如console.log("音乐播放成功");）
-            }).catch((error) => {
-                // 播放失败的处理，比如可以尝试再次触发播放或者给用户提示等
-                console.log("音乐播放失败: ", error);
-            });
+        // 定义一个函数来处理音乐播放及浏览器限制相关逻辑
+        function handleMusicPlay() {
+            // 检查浏览器是否允许自动播放音频
+            var isAutoPlayAllowed = false;
+            try {
+                // 创建一个临时音频元素来检测自动播放权限
+                var testAudio = new Audio();
+                testAudio.play().then(() => {
+                    isAutoPlayAllowed = true;
+                }).catch(() => {
+                    isAutoPlayAllowed = false;
+                });
+            } catch (e) {
+                // 如果创建临时音频元素或检测过程出错，默认不允许自动播放
+                isAutoPlayAllowed = false;
+            }
+
+            if (isAutoPlayAllowed) {
+                // 如果允许自动播放，直接播放音乐
+                audio.play().then(() => {
+                    console.log("音乐自动播放成功");
+                }).catch((error) => {
+                    console.log("音乐自动播放失败: ", error);
+                });
+            } else {
+                // 如果不允许自动播放，等待用户交互（这里假设是点击事件）后再播放
+                document.addEventListener('click', function () {
+                    audio.play().then(() => {
+                        console.log("音乐在用户点击后播放成功");
+                    }).catch((error) => {
+                        console.log("音乐在用户点击后播放失败: ", error);
+                    });
+                    // 移除点击事件监听器，避免多次绑定导致多次播放
+                    document.removeEventListener('click', arguments.callee);
+                });
+            }
         }
 
-        // 先尝试自动播放（可能因为浏览器限制不成功）
-        tryPlayMusic();
-
-        // 当页面获得用户首次交互（这里假设是点击事件）时再次尝试播放
-        document.addEventListener('click', tryPlayMusic);
+        // 调用函数处理音乐播放逻辑
+        handleMusicPlay();
     </script>
 
     <script type="text/javascript" src="js/count.js"></script>
     <script type="text/javascript" async="" src="js/su.js"></script>
 </body>
 </html>
-
